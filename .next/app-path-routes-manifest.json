@@ -1,5 +1,11 @@
 {
   "/_global-error/page": "/_global-error",
   "/_not-found/page": "/_not-found",
-  "/page": "/"
+  "/admin/page": "/admin",
+  "/api/appointments/[id]/route": "/api/appointments/[id]",
+  "/api/appointments/route": "/api/appointments",
+  "/api/checkout/route": "/api/checkout",
+  "/api/contact/route": "/api/contact",
+  "/page": "/",
+  "/payment/page": "/payment"
 }

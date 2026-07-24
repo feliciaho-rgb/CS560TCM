@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import ContactForm from './components/contact-form';
 
 const services = [
   { title: 'Pain Relief', description: 'Gentle acupuncture and integrative care for lasting comfort.' },
@@ -11,10 +12,49 @@ const services = [
   { title: 'Stroke Recovery Support', description: 'Comprehensive recovery with restorative therapies.' },
 ];
 
+const ceuTopics = [
+  {
+    title: 'Fall Prevention',
+    summary: 'This session teaches practical movement and balance strategies to reduce fall risk and support safer daily confidence.',
+    date: 'August 12, 2026',
+    time: '10:00 AM – 12:00 PM',
+    presenter: 'Dr. Felicia Ho',
+    location: 'Heal & Harmony Clinic, Suite 409',
+  },
+  {
+    title: 'Women Health',
+    summary: 'This workshop highlights proactive, integrative care approaches that strengthen hormonal, reproductive, and everyday wellness.',
+    date: 'September 18, 2026',
+    time: '1:00 PM – 3:00 PM',
+    presenter: 'Dr. Felicia Ho',
+    location: 'Heal & Harmony Clinic, Suite 409',
+  },
+  {
+    title: 'Children Health',
+    summary: 'This course covers gentle family-centered wellness habits that support growth, immunity, and long-term vitality.',
+    date: 'October 09, 2026',
+    time: '9:00 AM – 11:00 AM',
+    presenter: 'Dr. Felicia Ho',
+    location: 'Heal & Harmony Clinic, Suite 409',
+  },
+];
+
 export default function Home() {
   return (
     <main className="bg-ivory text-forest selection:bg-sage selection:text-ivory">
-      <section className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),_rgba(247,241,233,0.9)_60%),_linear-gradient(180deg,#F7F1E9_0%,#E8D8C0_100%)]">
+      <header className="sticky top-0 z-20 border-b border-sand/60 bg-ivory/90 backdrop-blur-sm">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 sm:px-10 lg:px-16">
+          <a href="#top" className="text-sm font-semibold uppercase tracking-[0.24em] text-forest">Heal & Harmony</a>
+          <div className="flex items-center gap-4 text-sm text-forest/75">
+            <a href="#about" className="transition hover:text-forest">About</a>
+            <a href="#services" className="transition hover:text-forest">Services</a>
+            <a href="#ceu" className="transition hover:text-forest">CEU</a>
+            <a href="#book" className="transition hover:text-forest">Book</a>
+          </div>
+        </nav>
+      </header>
+
+      <section id="top" className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),_rgba(247,241,233,0.9)_60%),_linear-gradient(180deg,#F7F1E9_0%,#E8D8C0_100%)]">
         <div className="absolute inset-0 bg-[url('/hero.png')] bg-cover bg-center opacity-100" />
         <div className="absolute inset-0 bg-black/10" />
         <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl flex-col justify-center px-6 py-12 sm:px-10 lg:px-16">
@@ -34,6 +74,12 @@ export default function Home() {
               </a>
               <a href="#services" className="inline-flex items-center justify-center rounded-full border border-forest/20 bg-white/90 px-8 py-3 text-base font-semibold text-forest transition hover:border-forest hover:bg-forest/5">
                 Explore Services
+              </a>
+              <a href="#ceu" className="inline-flex items-center justify-center rounded-full border border-sage/30 bg-sage/10 px-8 py-3 text-base font-semibold text-forest transition hover:border-sage hover:bg-sage/20">
+                CEU Programs
+              </a>
+              <a href="/admin" className="inline-flex items-center justify-center rounded-full border border-sage/30 bg-sage/10 px-8 py-3 text-base font-semibold text-forest transition hover:border-sage hover:bg-sage/20">
+                Local Dev Admin
               </a>
             </div>
           </div>
@@ -91,6 +137,38 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="ceu" className="bg-white px-6 py-16 sm:px-10 lg:px-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sage">CEU Learning</p>
+            <h2 className="mt-4 text-3xl font-semibold text-forest sm:text-4xl">Join a focused continuing education experience.</h2>
+          </div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {ceuTopics.map((topic) => (
+              <article key={topic.title} className="flex h-full flex-col rounded-[2rem] border border-sand bg-[#F9F4EC] p-8 shadow-soft">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sage">CEU Topic</p>
+                  <h3 className="mt-4 text-2xl font-semibold text-forest">{topic.title}</h3>
+                  <p className="mt-4 text-sm leading-7 text-forest/75">{topic.summary}</p>
+                  <div className="mt-6 space-y-3 text-sm text-forest/80">
+                    <p><span className="font-semibold text-forest">Date:</span> {topic.date}</p>
+                    <p><span className="font-semibold text-forest">Time:</span> {topic.time}</p>
+                    <p><span className="font-semibold text-forest">Presenter:</span> {topic.presenter}</p>
+                    <p><span className="font-semibold text-forest">Location:</span> {topic.location}</p>
+                  </div>
+                </div>
+                <a
+                  href={`/payment?topic=${encodeURIComponent(topic.title)}`}
+                  className="mt-8 inline-flex items-center justify-center rounded-full bg-forest px-5 py-3 text-sm font-semibold text-ivory transition hover:bg-sage"
+                >
+                  Register
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl px-6 py-16 sm:px-10 lg:px-16">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_0.8fr] lg:items-center">
           <div className="rounded-[2rem] bg-forest/5 p-10 shadow-soft">
@@ -128,28 +206,7 @@ export default function Home() {
                 <p><span className="font-semibold text-forest">Contact:</span> concierge@healharmony.com</p>
               </div>
             </div>
-            <form className="space-y-5 rounded-[2rem] border border-sand bg-ivory/90 p-8 shadow-soft">
-              <div>
-                <label className="block text-sm font-semibold text-forest">Full Name</label>
-                <input type="text" placeholder="Enter your name" className="mt-3 w-full rounded-3xl border border-sand bg-white px-4 py-3 text-sm text-forest outline-none transition focus:border-forest/60" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-forest">Email Address</label>
-                <input type="email" placeholder="Enter your email" className="mt-3 w-full rounded-3xl border border-sand bg-white px-4 py-3 text-sm text-forest outline-none transition focus:border-forest/60" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-forest">Primary Concern</label>
-                <select className="mt-3 w-full rounded-3xl border border-sand bg-white px-4 py-3 text-sm text-forest outline-none transition focus:border-forest/60">
-                  <option>Longevity & Wellness</option>
-                  <option>Pain Relief</option>
-                  <option>Digestive Health</option>
-                  <option>Healthy Aging</option>
-                </select>
-              </div>
-              <button type="submit" className="w-full rounded-full bg-forest px-6 py-3 text-base font-semibold text-ivory transition hover:bg-sage">
-                Request Appointment
-              </button>
-            </form>
+            <ContactForm />
           </div>
         </div>
       </section>

@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Patient {
+  id          Int      @id @default(autoincrement())
+  firstName   String   @map("first_name")
+  middleName  String?  @map("middle_name")
+  lastName    String   @map("last_name")
+  cellPhone   String   @map("cell_phone")
+  email       String   @unique
+  dob         DateTime? @map("dob")
+  createdAt   DateTime @default(now()) @map("created_at")
+  appointments Appointment[]
+
+  @@map("patients")
+}
+
+model Appointment {
+  id              Int      @id @default(autoincrement())
+  patientId       Int      @map("patient_id")
+  appointmentType String   @map("appointment_type")
+  subject         String
+  location        String
+  appointmentDate DateTime @map("appointment_date")
+  appointmentTime String   @map("appointment_time")
+  status          String   @default("pending")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  insuranceDocuments InsuranceDocument[]
+  statusHistory   AppointmentStatusHistory[]
+
+  @@map("appointments")
+}
+
+model InsuranceDocument {
+  id           Int      @id @default(autoincrement())
+  appointmentId Int     @map("appointment_id")
+  documentType String   @map("document_type")
+  fileName     String   @map("file_name")
+  filePath     String   @map("file_path")
+  fileType     String?  @map("file_type")
+  uploadedAt   DateTime @default(now()) @map("uploaded_at")
+
+  appointment  Appointment @relation(fields: [appointmentId], references: [id])
+
+  @@map("insurance_documents")
+}
+
+model AppointmentStatusHistory {
+  id             Int      @id @default(autoincrement())
+  appointmentId  Int      @map("appointment_id")
+  oldStatus      String?  @map("old_status")
+  newStatus      String   @map("new_status")
+  changedAt      DateTime @default(now()) @map("changed_at")
+
+  appointment    Appointment @relation(fields: [appointmentId], references: [id])
+
+  @@map("appointment_status_history")
+}
+
+model AdminUser {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  passwordHash String  @map("password_hash")
+  role        String   @default("admin")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("admin_users")
+}

@@ -21,7 +21,16 @@
     "afterFiles": [],
     "fallback": []
   },
-  "dynamicRoutes": [],
+  "dynamicRoutes": [
+    {
+      "page": "/api/appointments/[id]",
+      "regex": "^/api/appointments/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/appointments/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
   "staticRoutes": [
     {
       "page": "/",
@@ -40,6 +49,36 @@
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/api/appointments",
+      "regex": "^/api/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/appointments(?:/)?$"
+    },
+    {
+      "page": "/api/checkout",
+      "regex": "^/api/checkout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/checkout(?:/)?$"
+    },
+    {
+      "page": "/api/contact",
+      "regex": "^/api/contact(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/contact(?:/)?$"
+    },
+    {
+      "page": "/payment",
+      "regex": "^/payment(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/payment(?:/)?$"
     }
   ],
   "dataRoutes": [],
