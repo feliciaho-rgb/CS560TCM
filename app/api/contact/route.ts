@@ -19,6 +19,7 @@ type AppointmentPayload = {
   time: string;
   location: string;
   dob?: string;
+  maritalStatus?: string;
   insuranceFront?: File | string;
   insuranceBack?: File | string;
 };
@@ -51,6 +52,7 @@ const normalizePayload = (
   time: getStringValue(payload.time),
   location: getStringValue(payload.location),
   dob: getStringValue(payload.dob),
+  maritalStatus: getStringValue(payload.maritalStatus),
   insuranceFront: payload.insuranceFront instanceof File ? payload.insuranceFront : undefined,
   insuranceBack: payload.insuranceBack instanceof File ? payload.insuranceBack : undefined,
 });
@@ -96,7 +98,7 @@ const validatePayload = (payload: AppointmentPayload) => {
     errors.time = 'Please select a time.';
   }
 
-  if (!payload.location?.trim()) {
+  if (payload.appointmentType?.trim() !== 'Telehealth' && !payload.location?.trim()) {
     errors.location = 'Please select a location.';
   }
 
@@ -150,15 +152,18 @@ export async function POST(request: Request) {
       },
     });
 
+    const appointmentLocation = payload.appointmentType?.trim() === 'Telehealth' ? 'Online Visit' : payload.location.trim();
+
     const appointment = await prisma.appointment.create({
       data: {
         patientId: patient.id,
         appointmentType: payload.appointmentType.trim(),
         subject: payload.subject.trim(),
-        location: payload.location.trim(),
+        location: appointmentLocation,
         appointmentDate: new Date(`${payload.date}T00:00:00`),
         appointmentTime: payload.time.trim(),
         status: 'pending',
+        submittedAt: new Date(),
       },
     });
 
@@ -196,23 +201,6 @@ export async function POST(request: Request) {
     const smtpFrom = process.env.SMTP_FROM;
     const smtpTo = process.env.SMTP_TO;
 
-    if (!smtpHost || !smtpUser || !smtpPass || !smtpFrom || !smtpTo) {
-      return NextResponse.json(
-        { error: 'Mail server is not configured. Please set SMTP environment variables.' },
-        { status: 500 }
-      );
-    }
-
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: {
-        user: smtpUser,
-        pass: smtpPass,
-      },
-    });
-
     const attachments: AttachmentFile[] = [];
 
     if (isMultipart) {
@@ -231,42 +219,63 @@ export async function POST(request: Request) {
       }
     }
 
-    await transporter.sendMail({
-      from: smtpFrom,
-      to: smtpTo,
-      replyTo: payload.email,
-      subject: `[Appointment Request] ${payload.appointmentType} - ${payload.subject}`,
-      text: [
-        `First Name: ${payload.firstName}`,
-        `Middle Name: ${payload.middleName || ''}`,
-        `Last Name: ${payload.lastName}`,
-        `Cell: ${payload.cell}`,
-        `Email: ${payload.email}`,
-        `Appointment Type: ${payload.appointmentType}`,
-        `Subject: ${payload.subject}`,
-        `Date: ${payload.date}`,
-        `Time: ${payload.time}`,
-        `Location: ${payload.location}`,
-        `DOB: ${payload.dob || ''}`,
-      ].join('\n'),
-      html: `
-        <h3>New appointment request</h3>
-        <p><strong>First Name:</strong> ${payload.firstName}</p>
-        <p><strong>Middle Name:</strong> ${payload.middleName || ''}</p>
-        <p><strong>Last Name:</strong> ${payload.lastName}</p>
-        <p><strong>Cell:</strong> ${payload.cell}</p>
-        <p><strong>Email:</strong> ${payload.email}</p>
-        <p><strong>Appointment Type:</strong> ${payload.appointmentType}</p>
-        <p><strong>Subject:</strong> ${payload.subject}</p>
-        <p><strong>Date:</strong> ${payload.date}</p>
-        <p><strong>Time:</strong> ${payload.time}</p>
-        <p><strong>Location:</strong> ${payload.location}</p>
-        <p><strong>DOB:</strong> ${payload.dob || ''}</p>
-      `,
-      attachments,
-    });
+    if (smtpHost && smtpUser && smtpPass && smtpFrom && smtpTo) {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+      });
 
-    return NextResponse.json({ message: 'Your appointment request has been submitted successfully.' }, { status: 200 });
+      await transporter.sendMail({
+        from: smtpFrom,
+        to: smtpTo,
+        replyTo: payload.email,
+        subject: `[Appointment Request] ${payload.appointmentType} - ${payload.subject}`,
+        text: [
+          `First Name: ${payload.firstName}`,
+          `Middle Name: ${payload.middleName || ''}`,
+          `Last Name: ${payload.lastName}`,
+          `Cell: ${payload.cell}`,
+          `Email: ${payload.email}`,
+          `Appointment Type: ${payload.appointmentType}`,
+          `Subject: ${payload.subject}`,
+          `Date: ${payload.date}`,
+          `Time: ${payload.time}`,
+          `Location: ${payload.appointmentType?.trim() === 'Telehealth' ? 'Online Visit' : payload.location}`,
+          `DOB: ${payload.dob || ''}`,
+          `Marital Status: ${payload.maritalStatus || ''}`,
+        ].join('\n'),
+        html: `
+          <h3>New appointment request</h3>
+          <p><strong>First Name:</strong> ${payload.firstName}</p>
+          <p><strong>Middle Name:</strong> ${payload.middleName || ''}</p>
+          <p><strong>Last Name:</strong> ${payload.lastName}</p>
+          <p><strong>Cell:</strong> ${payload.cell}</p>
+          <p><strong>Email:</strong> ${payload.email}</p>
+          <p><strong>Appointment Type:</strong> ${payload.appointmentType}</p>
+          <p><strong>Subject:</strong> ${payload.subject}</p>
+          <p><strong>Date:</strong> ${payload.date}</p>
+          <p><strong>Time:</strong> ${payload.time}</p>
+          <p><strong>Location:</strong> ${payload.appointmentType?.trim() === 'Telehealth' ? 'Online Visit' : payload.location}</p>
+          <p><strong>DOB:</strong> ${payload.dob || ''}</p>
+          <p><strong>Marital Status:</strong> ${payload.maritalStatus || ''}</p>
+        `,
+        attachments,
+      });
+    }
+
+    return NextResponse.json(
+      {
+        message: smtpHost && smtpUser && smtpPass && smtpFrom && smtpTo
+          ? 'Your appointment request has been submitted successfully.'
+          : 'Your appointment request has been saved successfully. Email notifications are currently disabled because SMTP is not configured.',
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Appointment form error:', error);
     return NextResponse.json(
