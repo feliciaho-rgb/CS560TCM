@@ -6,6 +6,8 @@
   "/api/appointments/route": "app/api/appointments/route.js",
   "/api/checkout/route": "app/api/checkout/route.js",
   "/api/contact/route": "app/api/contact/route.js",
+  "/clinic-system/billing/page": "app/clinic-system/billing/page.js",
+  "/clinic-system/page": "app/clinic-system/page.js",
   "/page": "app/page.js",
   "/payment/page": "app/payment/page.js"
 }

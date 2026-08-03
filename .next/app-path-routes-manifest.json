@@ -6,6 +6,8 @@
   "/api/appointments/route": "/api/appointments",
   "/api/checkout/route": "/api/checkout",
   "/api/contact/route": "/api/contact",
+  "/clinic-system/billing/page": "/clinic-system/billing",
+  "/clinic-system/page": "/clinic-system",
   "/page": "/",
   "/payment/page": "/payment"
 }

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import ContactForm from './components/contact-form';
+import ClinicSystemsNav from './components/clinic-systems-nav';
 
 const services = [
   { title: 'Pain Relief', description: 'Gentle acupuncture and integrative care for lasting comfort.' },
@@ -45,11 +46,12 @@ export default function Home() {
       <header className="sticky top-0 z-20 border-b border-sand/60 bg-ivory/90 backdrop-blur-sm">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 sm:px-10 lg:px-16">
           <a href="#top" className="text-sm font-semibold uppercase tracking-[0.24em] text-forest">Heal & Harmony</a>
-          <div className="flex items-center gap-4 text-sm text-forest/75">
+          <div className="flex flex-wrap items-center justify-end gap-3 text-sm text-forest/75">
             <a href="#about" className="transition hover:text-forest">About</a>
             <a href="#services" className="transition hover:text-forest">Services</a>
             <a href="#ceu" className="transition hover:text-forest">CEU</a>
             <a href="#book" className="transition hover:text-forest">Book</a>
+            <ClinicSystemsNav />
           </div>
         </nav>
       </header>
@@ -77,9 +79,6 @@ export default function Home() {
               </a>
               <a href="#ceu" className="inline-flex items-center justify-center rounded-full border border-sage/30 bg-sage/10 px-8 py-3 text-base font-semibold text-forest transition hover:border-sage hover:bg-sage/20">
                 CEU Programs
-              </a>
-              <a href="/admin" className="inline-flex items-center justify-center rounded-full border border-sage/30 bg-sage/10 px-8 py-3 text-base font-semibold text-forest transition hover:border-sage hover:bg-sage/20">
-                Local Dev Admin
               </a>
             </div>
           </div>

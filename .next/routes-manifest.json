@@ -75,6 +75,18 @@
       "namedRegex": "^/api/contact(?:/)?$"
     },
     {
+      "page": "/clinic-system",
+      "regex": "^/clinic\\-system(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/clinic\\-system(?:/)?$"
+    },
+    {
+      "page": "/clinic-system/billing",
+      "regex": "^/clinic\\-system/billing(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/clinic\\-system/billing(?:/)?$"
+    },
+    {
       "page": "/payment",
       "regex": "^/payment(?:/)?$",
       "routeKeys": {},

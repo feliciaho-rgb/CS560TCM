@@ -56,6 +56,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/clinic-system/billing/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/clinic-system/billing">> = Specific
+  const handler = {} as typeof import("../../../app/clinic-system/billing/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/clinic-system/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/clinic-system">> = Specific
+  const handler = {} as typeof import("../../../app/clinic-system/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/">> = Specific
