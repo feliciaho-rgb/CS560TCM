@@ -2,6 +2,11 @@ node_modules
 
 /app/generated/prisma
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
 # Cache and build artifacts
 .next/
 .turbo/

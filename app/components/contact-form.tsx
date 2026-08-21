@@ -52,7 +52,7 @@ const subjectOptions = [
   'Other',
 ];
 
-const appointmentTypeOptions = ['New Patient Consultation', 'Follow-Up Visit', 'Telehealth'];
+const appointmentTypeOptions = ['New Patient Consultation (90 min)', 'Follow-Up Visit (70 min)', 'Telehealth'];
 const maritalStatusOptions = ['Single', 'Married'];
 
 export default function ContactForm() {
@@ -316,7 +316,7 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full rounded-[2rem] border border-sand bg-ivory/90 p-6 shadow-soft sm:p-8">
-      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-full border border-sand/70 bg-white/80 p-2 text-xs font-semibold uppercase tracking-[0.26em] text-forest/70">
+      <div className="mb-6 flex items-center gap-2 overflow-x-auto rounded-full border border-sand/70 bg-white/80 p-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-forest/70">
         {[1, 2, 3].map((step) => {
           const isActive = currentStep === step;
           const isComplete = currentStep > step;
@@ -325,10 +325,10 @@ export default function ContactForm() {
           return (
             <div
               key={step}
-              className={`flex items-center gap-2 rounded-full px-3 py-2 transition ${isActive ? 'bg-sage text-white' : isComplete ? 'bg-forest/10 text-forest' : 'bg-transparent'}`}
+              className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 transition ${isActive ? 'bg-sage text-white' : isComplete ? 'bg-forest/10 text-forest' : 'bg-transparent'}`}
               aria-current={isActive ? 'step' : undefined}
             >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-current text-[11px]">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full border border-current text-[10px]">
                 {step}
               </span>
               <span>{label}</span>
@@ -423,6 +423,9 @@ export default function ContactForm() {
                 <option value="Sunnyvale">Sunnyvale</option>
                 <option value="Palo Alto">Palo Alto</option>
               </select>
+              <p className="mt-2 text-xs text-forest/70">
+                Sunnyvale is available on Monday and Wednesday only. Palo Alto is available on Tuesday and Friday only.
+              </p>
               {renderFieldError('location')}
             </div>
           ) : (
@@ -459,6 +462,13 @@ export default function ContactForm() {
               <label htmlFor="time" className="block text-sm font-semibold text-forest">
                 Preferred Time <span className="text-red-600">*</span>
               </label>
+              <p className="mt-2 text-xs text-forest/70">
+                {form.appointmentType === 'New Patient Consultation (90 min)' || form.appointmentType === 'New Patient Consultation'
+                  ? 'New patient visits are scheduled in 90-minute blocks.'
+                  : form.appointmentType === 'Follow-Up Visit (70 min)' || form.appointmentType === 'Follow-Up Visit'
+                    ? 'Existing patient visits are scheduled in 70-minute blocks.'
+                    : 'New patient visits are 90 minutes; existing patient visits are 70 minutes.'}
+              </p>
               <select
                 id="time"
                 name="time"
@@ -692,6 +702,10 @@ export default function ContactForm() {
           </p>
         ) : null}
       </div>
+
+      <p className="mt-4 text-center text-sm text-forest/70">
+        Need help scheduling? Call 408-680-4049 for appointment assistance.
+      </p>
 
       {showSuccessModal ? (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-forest/70 p-4" onClick={() => setShowSuccessModal(false)}>
