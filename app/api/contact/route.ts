@@ -116,6 +116,39 @@ const validatePayload = (payload: AppointmentPayload) => {
   return errors;
 };
 
+const isConfiguredSmtpValue = (value: string | undefined) => {
+  if (!value) {
+    return false;
+  }
+
+  const normalized = value.trim();
+
+  if (!normalized) {
+    return false;
+  }
+
+  return !/(YOUR_|your_|replace_with|example\.com|smtp\.example)/i.test(normalized);
+};
+
+const getFailureMessage = (error: unknown) => {
+  const message = error instanceof Error ? error.message : 'Unknown server error';
+  const lowerMessage = message.toLowerCase();
+
+  if (lowerMessage.includes('database') || lowerMessage.includes('prisma') || lowerMessage.includes('connect') || lowerMessage.includes('econnrefused')) {
+    return 'The appointment database is unavailable. Please check DATABASE_URL and the PostgreSQL service, then try again.';
+  }
+
+  if (lowerMessage.includes('smtp') || lowerMessage.includes('nodemailer') || lowerMessage.includes('authentication')) {
+    return 'The appointment request was saved, but email notifications could not be sent. Please try again later.';
+  }
+
+  if (lowerMessage.includes('validation')) {
+    return 'The appointment details could not be validated. Please review the form and try again.';
+  }
+
+  return `Unable to submit your appointment request right now. Details: ${message}`;
+};
+
 export async function POST(request: Request) {
   try {
     const contentType = request.headers.get('content-type') || '';
@@ -194,12 +227,12 @@ export async function POST(request: Request) {
       }
     }
 
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpPort = Number(process.env.SMTP_PORT || 587);
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-    const smtpFrom = process.env.SMTP_FROM;
-    const smtpTo = process.env.SMTP_TO;
+    const smtpUser = (process.env.SMTP_USER || '').trim();
+    const smtpPass = (process.env.SMTP_PASS || '').trim();
+    const smtpHost = ((process.env.SMTP_HOST || '').trim() || (smtpUser.toLowerCase().endsWith('@wuc.edu') ? 'smtp.office365.com' : 'smtp.gmail.com')).trim();
+    const smtpFrom = (process.env.SMTP_FROM || smtpUser || '').trim();
+    const smtpTo = (process.env.SMTP_TO || smtpFrom || '').trim();
+    const smtpConfigured = [smtpHost, smtpUser, smtpPass, smtpFrom, smtpTo].every(isConfiguredSmtpValue);
 
     const attachments: AttachmentFile[] = [];
 
@@ -219,58 +252,67 @@ export async function POST(request: Request) {
       }
     }
 
-    if (smtpHost && smtpUser && smtpPass && smtpFrom && smtpTo) {
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
+    if (smtpConfigured) {
+      try {
+        const smtpPort = Number(process.env.SMTP_PORT || 587);
+        const transporter = nodemailer.createTransport({
+          host: smtpHost,
+          port: smtpPort,
+          secure: false,
+          requireTLS: true,
+          tls: {
+            ciphers: 'SSLv3',
+          },
+          auth: {
+            user: smtpUser,
+            pass: smtpPass,
+          },
+        });
 
-      await transporter.sendMail({
-        from: smtpFrom,
-        to: smtpTo,
-        replyTo: payload.email,
-        subject: `[Appointment Request] ${payload.appointmentType} - ${payload.subject}`,
-        text: [
-          `First Name: ${payload.firstName}`,
-          `Middle Name: ${payload.middleName || ''}`,
-          `Last Name: ${payload.lastName}`,
-          `Cell: ${payload.cell}`,
-          `Email: ${payload.email}`,
-          `Appointment Type: ${payload.appointmentType}`,
-          `Subject: ${payload.subject}`,
-          `Date: ${payload.date}`,
-          `Time: ${payload.time}`,
-          `Location: ${payload.appointmentType?.trim() === 'Telehealth' ? 'Online Visit' : payload.location}`,
-          `DOB: ${payload.dob || ''}`,
-          `Marital Status: ${payload.maritalStatus || ''}`,
-        ].join('\n'),
-        html: `
-          <h3>New appointment request</h3>
-          <p><strong>First Name:</strong> ${payload.firstName}</p>
-          <p><strong>Middle Name:</strong> ${payload.middleName || ''}</p>
-          <p><strong>Last Name:</strong> ${payload.lastName}</p>
-          <p><strong>Cell:</strong> ${payload.cell}</p>
-          <p><strong>Email:</strong> ${payload.email}</p>
-          <p><strong>Appointment Type:</strong> ${payload.appointmentType}</p>
-          <p><strong>Subject:</strong> ${payload.subject}</p>
-          <p><strong>Date:</strong> ${payload.date}</p>
-          <p><strong>Time:</strong> ${payload.time}</p>
-          <p><strong>Location:</strong> ${payload.appointmentType?.trim() === 'Telehealth' ? 'Online Visit' : payload.location}</p>
-          <p><strong>DOB:</strong> ${payload.dob || ''}</p>
-          <p><strong>Marital Status:</strong> ${payload.maritalStatus || ''}</p>
-        `,
-        attachments,
-      });
+        await transporter.sendMail({
+          from: smtpFrom,
+          to: smtpTo,
+          replyTo: payload.email,
+          subject: `[Appointment Request] ${payload.appointmentType} - ${payload.subject}`,
+          text: [
+            `First Name: ${payload.firstName}`,
+            `Middle Name: ${payload.middleName || ''}`,
+            `Last Name: ${payload.lastName}`,
+            `Cell: ${payload.cell}`,
+            `Email: ${payload.email}`,
+            `Appointment Type: ${payload.appointmentType}`,
+            `Subject: ${payload.subject}`,
+            `Date: ${payload.date}`,
+            `Time: ${payload.time}`,
+            `Location: ${payload.appointmentType?.trim() === 'Telehealth' ? 'Online Visit' : payload.location}`,
+            `DOB: ${payload.dob || ''}`,
+            `Marital Status: ${payload.maritalStatus || ''}`,
+          ].join('\n'),
+          html: `
+            <h3>New appointment request</h3>
+            <p><strong>First Name:</strong> ${payload.firstName}</p>
+            <p><strong>Middle Name:</strong> ${payload.middleName || ''}</p>
+            <p><strong>Last Name:</strong> ${payload.lastName}</p>
+            <p><strong>Cell:</strong> ${payload.cell}</p>
+            <p><strong>Email:</strong> ${payload.email}</p>
+            <p><strong>Appointment Type:</strong> ${payload.appointmentType}</p>
+            <p><strong>Subject:</strong> ${payload.subject}</p>
+            <p><strong>Date:</strong> ${payload.date}</p>
+            <p><strong>Time:</strong> ${payload.time}</p>
+            <p><strong>Location:</strong> ${payload.appointmentType?.trim() === 'Telehealth' ? 'Online Visit' : payload.location}</p>
+            <p><strong>DOB:</strong> ${payload.dob || ''}</p>
+            <p><strong>Marital Status:</strong> ${payload.maritalStatus || ''}</p>
+          `,
+          attachments,
+        });
+      } catch (mailError) {
+        console.error('Appointment email notification failed:', mailError);
+      }
     }
 
     return NextResponse.json(
       {
-        message: smtpHost && smtpUser && smtpPass && smtpFrom && smtpTo
+        message: smtpConfigured
           ? 'Your appointment request has been submitted successfully.'
           : 'Your appointment request has been saved successfully. Email notifications are currently disabled because SMTP is not configured.',
       },
@@ -278,8 +320,10 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error('Appointment form error:', error);
+    const message = getFailureMessage(error);
+
     return NextResponse.json(
-      { error: 'Unable to submit your appointment request right now. Please try again later.' },
+      { error: message },
       { status: 500 }
     );
   }

@@ -258,6 +258,11 @@ export default function ContactForm() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (currentStep !== 3) {
+      setStatus({ type: 'error', message: 'Please review your appointment and click Request Appointment.' });
+      return;
+    }
+
     const validationErrors = { ...validateStepOne(), ...validateStepTwo() };
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -315,7 +320,16 @@ export default function ContactForm() {
   const summaryLocation = form.appointmentType === 'Telehealth' ? 'Online Visit' : form.location || 'Pending selection';
 
   return (
-    <form onSubmit={handleSubmit} className="w-full rounded-[2rem] border border-sand bg-ivory/90 p-6 shadow-soft sm:p-8">
+    <form
+      onSubmit={handleSubmit}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }}
+      className="w-full rounded-[2rem] border border-sand bg-ivory/90 p-6 shadow-soft sm:p-8"
+    >
       <div className="mb-6 flex items-center gap-2 overflow-x-auto rounded-full border border-sand/70 bg-white/80 p-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-forest/70">
         {[1, 2, 3].map((step) => {
           const isActive = currentStep === step;

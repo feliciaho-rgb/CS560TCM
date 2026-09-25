@@ -109,7 +109,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "/Users/felicia/Documents/Site/CS560TCM",
+    "outputFileTracingRoot": "/Users/felicia/Desktop/Site/CS560TCM",
     "cacheComponents": false,
     "cacheLife": {
       "default": {
@@ -309,11 +309,11 @@
     "bundlePagesRouterDependencies": false,
     "configFileName": "next.config.mjs",
     "turbopack": {
-      "root": "/Users/felicia/Documents/Site/CS560TCM"
+      "root": "/Users/felicia/Desktop/Site/CS560TCM"
     },
     "distDirRoot": ".next"
   },
-  "appDir": "/Users/felicia/Documents/Site/CS560TCM",
+  "appDir": "/Users/felicia/Desktop/Site/CS560TCM",
   "relativeAppDir": "",
   "files": [
     ".next/package.json",

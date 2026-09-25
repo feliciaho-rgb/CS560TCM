@@ -1,3 +1,20 @@
-{"timestamp":"00:00:00.997","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:00:27.241","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:02:29.754","source":"Server","level":"ERROR","message":"Appointment form error: Error: getaddrinfo ENOTFOUND smtp.example.com"}
+{"timestamp":"00:00:01.866","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:15.085","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:01:01.552","source":"Server","level":"ERROR","message":"Appointment form error: Error: getaddrinfo ENOTFOUND smtp.example.com"}
+{"timestamp":"00:01:05.761","source":"Server","level":"ERROR","message":"Appointment form error: Error: getaddrinfo ENOTFOUND smtp.example.com"}
+{"timestamp":"00:06:00.585","source":"Server","level":"LOG","message":"✓ Compiled in 203ms"}
+{"timestamp":"00:08:32.273","source":"Server","level":"ERROR","message":"Appointment form error: Error: getaddrinfo ENOTFOUND smtp.example.com"}
+{"timestamp":"00:08:46.676","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:16:59.139","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:17:54.428","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:28:00.543","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:28:51.803","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:29:21.191","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:30:51.149","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:31:38.123","source":"Server","level":"ERROR","message":"Appointment email notification failed: Error: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials a92af1059eb24-145ad307a8dsm1609424c88.9 - gsmtp"}
+{"timestamp":"00:33:45.373","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:33:45.703","source":"Server","level":"LOG","message":"✓ Compiled in 266ms"}
+{"timestamp":"00:35:12.100","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:35:48.989","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
+{"timestamp":"00:37:03.604","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:40:37.595","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
